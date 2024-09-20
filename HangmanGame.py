@@ -12,12 +12,8 @@ class Hangman:
         self.word = choice((self.word_list))
         self.guessed_word = ["_"] * (len(self.word))
         self.tries = 6
-        self.intro_label = tk.Label(self.window, text=f"\nWelcome to Hangman! Try to guess the word.\n\n", font=("Arial", 18))
-        self.intro_label1 = tk.Label(self.window,
-                                    text=f" Words :  {self.word_list}",
-                                    font=("Arial", 18))
+        self.intro_label = tk.Label(self.window, text=f"\nWelcome to Hangman! Try to guess the word.\n\n Words :  {self.word_list}", font=("Arial", 18
         self.intro_label.pack()
-        self.intro_label1.pack()
 
 
         # Display the word as underscores initially
