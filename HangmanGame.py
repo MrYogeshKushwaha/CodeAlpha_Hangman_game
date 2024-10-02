@@ -27,9 +27,14 @@ class Hangman:
 
         # Elements for the actual game, hidden initially
         self.guess_entry = tk.Entry(self.window, font=("Arial", 24))
-        self.guess_button = tk.Button(self.window, text="Guess", command=self.guess_letter)
+        self.guess_button = tk.Button(self.window, text="Guess",font=("Arial",18),command=self.guess_letter)
         self.hangman_label = tk.Label(self.window, text=self.display_hangman(), font=("Arial", 24))
         self.result_label = tk.Label(self.window, text="", font=("Arial", 24))
+
+        # Frame for Quit and Play Again buttons (hidden initially)
+        self.button_frame = tk.Frame(self.window)
+        self.quit_button = tk.Button(self.button_frame, text="Quit", font=("Arial", 18), command=self.window.quit)
+        self.play_again_button = tk.Button(self.button_frame, text="Play Again", font=("Arial", 18), command=self.restart_game)
 
     def start_game(self):
         # Once the start button is clicked, hide the intro label and start button
@@ -146,8 +151,31 @@ class Hangman:
         # Disable further input after the game ends
         self.guess_entry.config(state=tk.DISABLED)
         self.guess_button.config(state=tk.DISABLED)
-        # Delay before quitting to allow the player to read the result
-        self.window.after(3000, self.window.quit)
+
+        # Show Quit and Play Again buttons in the frame, side by side
+        self.button_frame.pack()
+        self.play_again_button.pack(side=tk.LEFT, padx=10)
+        self.quit_button.pack(side=tk.LEFT, padx=10)
+
+    def restart_game(self):
+        # Reset game state
+        self.word = choice(self.word_list)
+        self.guessed_word = ["_"] * len(self.word)
+        self.tries = 6
+
+        # Reset the display elements
+        self.word_label['text'] = " ".join(self.guessed_word)
+        self.hangman_label['text'] = self.display_hangman()
+        self.result_label['text'] = ""
+
+        # Enable input fields again
+        self.guess_entry.config(state=tk.NORMAL)
+        self.guess_button.config(state=tk.NORMAL)
+
+        # Hide Quit and Play Again buttons
+        self.quit_button.pack_forget()
+        self.play_again_button.pack_forget()
+        self.button_frame.pack_forget()
 
     def run(self):
         self.window.mainloop()
