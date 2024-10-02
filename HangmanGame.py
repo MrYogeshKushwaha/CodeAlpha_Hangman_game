@@ -3,18 +3,19 @@ from random import choice
 
 class Hangman:
     def __init__(self):
-        #open window and window name
+        # Open window and window name
         self.window = tk.Tk()
         self.window.title("Hangman")
         
         # Word to guess is selected
-        self.word_list = ["france", "spain", "india", "germany","lion", "tiger", "bear", "monkey","pizza"]
-        self.word = choice((self.word_list))
-        self.guessed_word = ["_"] * (len(self.word))
+        self.word_list = ["france", "spain", "india", "germany", "lion", "tiger", "bear", "monkey", "pizza"]
+        self.word = choice(self.word_list)
+        self.guessed_word = ["_"] * len(self.word)
         self.tries = 6
-        self.intro_label = tk.Label(self.window, text=f"\nWelcome to Hangman! Try to guess the word.\n\n  Words :  {self.word_list}", font=("Arial", 18))
-        self.intro_label.pack()
 
+        # Introduction label
+        self.intro_label = tk.Label(self.window, text=f"\nWelcome to Hangman! Try to guess the word.\n\nWords: {self.word_list}", font=("Arial", 18))
+        self.intro_label.pack()
 
         # Display the word as underscores initially
         self.word_label = tk.Label(self.window, text=" ".join(self.guessed_word), font=("Arial", 24))
@@ -47,10 +48,13 @@ class Hangman:
         guess = self.guess_entry.get().lower()
         self.guess_entry.delete(0, tk.END)
 
-        if len(guess) != 1:
-            self.result_label['text'] = "Please guess one letter at a time."
+        # Validate the guess
+        if len(guess) != 1 or not guess.isalpha():
+            self.result_label['text'] = "Please guess a single letter (a-z)."
+            return
         elif guess in self.guessed_word:
             self.result_label['text'] = "You already guessed this letter. Try another one."
+            return
         elif guess not in self.word:
             self.result_label['text'] = "Incorrect guess."
             self.tries -= 1
@@ -62,14 +66,13 @@ class Hangman:
                     self.guessed_word[i] = guess
             self.word_label['text'] = " ".join(self.guessed_word)
 
+        # Check if the game is won or lost
         if "_" not in self.guessed_word:
             self.result_label['text'] = "Congratulations! You guessed the word."
-            self.window.quit()
-    
+            self.end_game()
         elif self.tries == 0:
-            self.result_label['text'] = f"Game over. The word was {self.word}."
-            self.result_label['text']="Better luck , please try again later."
-            self.window.quit()
+            self.result_label['text'] = f"Game over. The word was {self.word}. Better luck next time!"
+            self.end_game()
 
     def display_hangman(self):
         stages = [
@@ -138,6 +141,13 @@ class Hangman:
             """
         ]
         return stages[self.tries]
+
+    def end_game(self):
+        # Disable further input after the game ends
+        self.guess_entry.config(state=tk.DISABLED)
+        self.guess_button.config(state=tk.DISABLED)
+        # Delay before quitting to allow the player to read the result
+        self.window.after(3000, self.window.quit)
 
     def run(self):
         self.window.mainloop()
